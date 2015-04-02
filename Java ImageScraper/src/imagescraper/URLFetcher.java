@@ -25,6 +25,14 @@ public class URLFetcher
 		else return s.substring(0, index+1);
 	}
 	
+	private String backPath(String s)
+	{
+		int index = s.lastIndexOf('/');
+		int index2 = s.lastIndexOf('/',index-1);
+		if (index2==-1) return s;
+		else return s.substring(0, index2+1);
+	}
+	
 	private String domainPath(String s,int minIndex)
 	{
 		if (minIndex+1>s.length()-1) return s;
@@ -44,12 +52,12 @@ public class URLFetcher
 	{
 		if ((s.indexOf("http://")==0) || (s.indexOf("https://")==0)) return s;
 		String domainPath = domainPath(baseURL,computeMinIndex(baseURL));
-		System.out.println("Domain path = "+domainPath);
 		int index = s.indexOf('/');
 		if ((index==0) && (s.length()>1))	return domainPath+s.substring(1);
 		else if ((index==0) && (s.length()==1)) return domainPath;
-		//Add code to handle paths with ".."
-		return s;
+		//Add code to handle paths with more than one ".."
+		if (s.indexOf("..")==0) return backPath(baseURL)+s.substring("../".length());
+		return stemPath(baseURL,computeMinIndex(baseURL))+s;
 	}
 	
 	public List<String> fetchLinks()

@@ -65,14 +65,16 @@ public class ImageScraper
 		URLFetcher urlFetcher = new URLFetcher(htmlDoc,urlString);
 		List<String> list = urlFetcher.fetchLinks();
 		String filename = "C:\\Users\\Dany\\Downloads\\test\\";
-		String name;
+		String name, fname;
 		for(int i=0;i<list.size();i++)
 		{
 			System.out.println("Downloading : "+list.get(i));
 			try
 			{
 				name = list.get(i);
-				fetcher.getFile(name, filename+Integer.toString(i)+"."+fileExtension(name), 10000);
+				fname = fileTitle(name);
+				if (fname.length()>0) fetcher.getFile(name, filename+fileTitle(name)+"."+fileExtension(name), 100000);
+				else fetcher.getFile(name, filename+Integer.toString(i)+"."+fileExtension(name), 100000);
 			}
 			catch (MalformedURLException e)
 			{
@@ -101,5 +103,17 @@ public class ImageScraper
 			return res;
 		}
 		else return "";
+	}
+	
+	private static String fileTitle(String fileName)
+	{
+		int index = fileName.lastIndexOf('.');
+		if (index==-1) return "";
+		int nextindex = fileName.lastIndexOf('/', index);
+		if (nextindex==-1) return "";
+		String res = fileName.substring(nextindex,index);
+		res = res.replace("\\", "");
+		res = res.replace("/", "");
+		return res;
 	}
 }
