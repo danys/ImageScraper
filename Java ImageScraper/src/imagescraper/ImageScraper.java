@@ -15,7 +15,7 @@ import org.jsoup.nodes.Document;
 public class ImageScraper
 {
 	private static final int htmlDownloadBufferlength = 1000;
-	private static final int fileDownloadBufferlength = 100000;
+	private static final int fileDownloadBufferlength = 10000;
 	private static final long threadKillWaitTime = 10;
 	private static final int threadPoolSize = 10;
 	
