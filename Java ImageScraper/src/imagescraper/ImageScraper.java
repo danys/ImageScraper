@@ -18,6 +18,7 @@ public class ImageScraper
 	private static final int fileDownloadBufferlength = 10000;
 	private static final long threadKillWaitTime = 10;
 	private static final int threadPoolSize = 10;
+	private static final String filename = "C:\\Users\\Dany\\Downloads\\test\\";
 	
 	private static boolean validateURLString(String s)
 	{
@@ -71,7 +72,6 @@ public class ImageScraper
 		}
 		URLFetcher urlFetcher = new URLFetcher(htmlDoc,urlString);
 		List<String> list = urlFetcher.fetchLinks();
-		String filename = "C:\\Users\\Dany\\Downloads\\test\\";
 		String name, fname;
 		ExecutorService exec = Executors.newFixedThreadPool(threadPoolSize);
 		for(int i=0;i<list.size();i++)
