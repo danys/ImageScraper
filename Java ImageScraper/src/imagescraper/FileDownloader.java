@@ -29,15 +29,15 @@ public class FileDownloader implements Runnable
 		}
 		catch (MalformedURLException e)
 		{
-			e.printStackTrace();
+			System.out.println("Error: "+urlString+" is not a valid URL!");
 		}
 		catch (FileNotFoundException e)
 		{
-			e.printStackTrace();
+			System.out.println("The file "+fileName+" could not be found!");
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.out.println("There was a problem downloading file "+fileName);
 		}
 	}
 	
