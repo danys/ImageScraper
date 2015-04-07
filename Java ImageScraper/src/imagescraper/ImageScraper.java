@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jsoup.nodes.Document;
 
@@ -19,6 +20,8 @@ public class ImageScraper
 	private static final long threadKillWaitTime = 10;
 	private static final int threadPoolSize = 10;
 	private static final String filename = "C:\\Users\\Dany\\Downloads\\test\\";
+	
+	public static volatile AtomicInteger ntasks;
 	
 	private static boolean validateURLString(String s)
 	{
@@ -74,24 +77,31 @@ public class ImageScraper
 		List<String> list = urlFetcher.fetchLinks();
 		String name, fname;
 		ExecutorService exec = Executors.newFixedThreadPool(threadPoolSize);
+		ntasks = new AtomicInteger();
 		for(int i=0;i<list.size();i++)
 		{
 			System.out.println("Downloading : "+list.get(i));
 			name = list.get(i);
 			fname = fileTitle(name);
-			if (fname.length()>0) exec.execute(new FileDownloader(name, filename+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength));
-			else exec.execute(new FileDownloader(name, filename+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength));
+			if (fname.length()>0)	exec.execute(new FileDownloader(name, filename+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength));
+			else	exec.execute(new FileDownloader(name, filename+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength));
+			/*if (fname.length()>0) new Thread(new FileDownloader(name, filename+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength)).start();
+			else new Thread(new FileDownloader(name, filename+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength)).start();*/
 		}
 		//Shut down threads as described in Java API
 		exec.shutdown(); //Stop accepting new execute commands
+		while(ntasks.get()>0)
+		{
+			//do nothing
+		}
 		try
 		{
 		   //Wait before killing remaining threads
-		   if (!exec.awaitTermination(threadKillWaitTime, TimeUnit.SECONDS))
-		   {
+		   /*if (!exec.awaitTermination(threadKillWaitTime, TimeUnit.SECONDS))
+		   {*/
 		     exec.shutdownNow();
-		     if (!exec.awaitTermination(threadKillWaitTime, TimeUnit.SECONDS)) System.err.println("Pool did not terminate");
-		    }
+		     if (!exec.awaitTermination(threadKillWaitTime, TimeUnit.SECONDS)) System.out.println("Pool did not terminate");
+		    /*}*/
 		}
 		catch (InterruptedException ie)
 		{

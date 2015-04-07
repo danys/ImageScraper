@@ -23,6 +23,7 @@ public class FileDownloader implements Runnable
 	
 	public void run()
 	{
+		ImageScraper.ntasks.incrementAndGet();
 		try
 		{
 			getFile();
@@ -38,6 +39,10 @@ public class FileDownloader implements Runnable
 		catch (IOException e)
 		{
 			System.out.println("There was a problem downloading file "+fileName);
+		}
+		finally
+		{
+			ImageScraper.ntasks.decrementAndGet();
 		}
 	}
 	
