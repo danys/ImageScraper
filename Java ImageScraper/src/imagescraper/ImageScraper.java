@@ -19,7 +19,8 @@ public class ImageScraper
 	private static final int fileDownloadBufferlength = 10000;
 	private static final long threadKillWaitTime = 10;
 	private static final int threadPoolSize = 10;
-	private static final String filename = "C:\\Users\\Dany\\Downloads\\test\\";
+	private static final String dirname = "C:\\Users\\Dany\\Downloads\\test\\";
+	private static final long sleepMillis = 100;
 	
 	public static volatile AtomicInteger ntasks;
 	
@@ -83,25 +84,28 @@ public class ImageScraper
 			System.out.println("Downloading : "+list.get(i));
 			name = list.get(i);
 			fname = fileTitle(name);
-			if (fname.length()>0)	exec.execute(new FileDownloader(name, filename+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength));
-			else	exec.execute(new FileDownloader(name, filename+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength));
-			/*if (fname.length()>0) new Thread(new FileDownloader(name, filename+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength)).start();
-			else new Thread(new FileDownloader(name, filename+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength)).start();*/
+			if (fname.length()>0)	exec.execute(new FileDownloader(name, dirname+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength));
+			else	exec.execute(new FileDownloader(name, dirname+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength));
+			/*if (fname.length()>0) new Thread(new FileDownloader(name, dirname+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength)).start();
+			else new Thread(new FileDownloader(name, dirname+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength)).start();*/
 		}
 		//Shut down threads as described in Java API
 		exec.shutdown(); //Stop accepting new execute commands
 		while(ntasks.get()>0)
 		{
-			//do nothing
+			try
+			{
+				Thread.sleep(sleepMillis);
+			}
+			catch (InterruptedException e)
+			{
+				//Repeat the loop
+			}
 		}
 		try
 		{
-		   //Wait before killing remaining threads
-		   /*if (!exec.awaitTermination(threadKillWaitTime, TimeUnit.SECONDS))
-		   {*/
 		     exec.shutdownNow();
 		     if (!exec.awaitTermination(threadKillWaitTime, TimeUnit.SECONDS)) System.out.println("Pool did not terminate");
-		    /*}*/
 		}
 		catch (InterruptedException ie)
 		{
