@@ -13,6 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jsoup.nodes.Document;
 
+/**
+ * This class provides the entry point of the the ImageScraper application 
+ * @author Dany
+ *
+ */
 public class ImageScraper
 {
 	private static final int htmlDownloadBufferlength = 1000;
