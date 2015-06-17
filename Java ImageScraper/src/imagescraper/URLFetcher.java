@@ -60,9 +60,8 @@ public class URLFetcher
 		return stemPath(baseURL,computeMinIndex(baseURL))+s;
 	}
 	
-	public List<String> fetchImageLinks()
+	public void fetchImageLinks(List<String> links)
 	{
-		List<String> links = new ArrayList<String>();
 		Elements rawLinkTags = doc.select("img");
 		String rawLink;
 		for(Element tag : rawLinkTags)
@@ -70,9 +69,29 @@ public class URLFetcher
 			rawLink = tag.attr("src");
 			if ((!rawLink.isEmpty()) && (rawLink.compareTo("")!=0)) links.add(resolveLink(rawLink));
 		}
-		return links;
 	}
 	
+	//Extracts URL in url('<URL>') out of style tags
+	private void processStyleCSS(String content,List<String> returnList)
+	{
+		int pos = content.indexOf("url(\'"),pos2;
+		while(pos!=-1)
+		{
+			pos2 = content.indexOf('\'',pos+5);
+			returnList.add(resolveLink(content.substring(pos+5,pos2)));
+			if (pos+1<content.length()) pos = content.indexOf("url(\'",pos+1);
+			else break;
+		}
+	}
+	
+	//Extracts style tags and delegates to the processStyleCSS() method to get the image URLs
+	public void fetchStyleTags(List<String> styleTags)
+	{
+		Elements rawStyleTags = doc.select("style");
+		for(Element e: rawStyleTags) processStyleCSS(e.html(),styleTags);
+	}
+	
+	//Retrieve the links to the CSS files
 	public List<String> fetchCSSLinks()
 	{
 		List<String> links = new ArrayList<String>();

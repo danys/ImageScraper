@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -83,17 +84,18 @@ public class ImageScraper
 		}
 		//Extract src attribute from <img> tags
 		URLFetcher urlFetcher = new URLFetcher(htmlDoc,urlString);
-		List<String> list = urlFetcher.fetchImageLinks();
+		List<String> linksList = new ArrayList<String>();
+		urlFetcher.fetchImageLinks(linksList);
 		//Extract URLs of CSS files
-		List<String> cssLinks = urlFetcher.fetchCSSLinks();
-		
+		//List<String> cssLinks = urlFetcher.fetchCSSLinks();
+		urlFetcher.fetchStyleTags(linksList);
 		String name, fname;
 		ExecutorService exec = Executors.newFixedThreadPool(threadPoolSize);
 		ntasks = new AtomicInteger();
-		for(int i=0;i<list.size();i++)
+		for(int i=0;i<linksList.size();i++)
 		{
-			System.out.println("Downloading : "+list.get(i));
-			name = list.get(i);
+			System.out.println("Downloading : "+linksList.get(i));
+			name = linksList.get(i);
 			fname = fileTitle(name);
 			if (fname.length()>0)	exec.execute(new FileDownloader(name, dirname+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength));
 			else	exec.execute(new FileDownloader(name, dirname+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength));
