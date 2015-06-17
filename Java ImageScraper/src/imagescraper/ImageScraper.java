@@ -47,6 +47,7 @@ public class ImageScraper
 		try
 		{
 			boolean b = false;
+			//Read URL from console and check validity
 			while(!b)
 			{
 				System.out.println("Please enter a valid URL");
@@ -69,6 +70,7 @@ public class ImageScraper
 		}
 		System.out.println("URL to be scanned: "+urlString);
 		Document htmlDoc = null;
+		//Fetch the HTML page associated to the given URL
 		PageDownloader fetcher = new PageDownloader();
 		try
 		{
@@ -79,8 +81,12 @@ public class ImageScraper
 			System.out.println("There was a problem getting the page content");
 			return;
 		}
+		//Extract src attribute from <img> tags
 		URLFetcher urlFetcher = new URLFetcher(htmlDoc,urlString);
-		List<String> list = urlFetcher.fetchLinks();
+		List<String> list = urlFetcher.fetchImageLinks();
+		//Extract URLs of CSS files
+		List<String> cssLinks = urlFetcher.fetchCSSLinks();
+		
 		String name, fname;
 		ExecutorService exec = Executors.newFixedThreadPool(threadPoolSize);
 		ntasks = new AtomicInteger();

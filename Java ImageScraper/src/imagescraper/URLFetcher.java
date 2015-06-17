@@ -60,7 +60,7 @@ public class URLFetcher
 		return stemPath(baseURL,computeMinIndex(baseURL))+s;
 	}
 	
-	public List<String> fetchLinks()
+	public List<String> fetchImageLinks()
 	{
 		List<String> links = new ArrayList<String>();
 		Elements rawLinkTags = doc.select("img");
@@ -69,6 +69,23 @@ public class URLFetcher
 		{
 			rawLink = tag.attr("src");
 			if ((!rawLink.isEmpty()) && (rawLink.compareTo("")!=0)) links.add(resolveLink(rawLink));
+		}
+		return links;
+	}
+	
+	public List<String> fetchCSSLinks()
+	{
+		List<String> links = new ArrayList<String>();
+		Elements rawLinkTags = doc.select("link");
+		String rawLink,typeAttr;
+		for(Element tag : rawLinkTags)
+		{
+			typeAttr = tag.attr("type");
+			if ((!typeAttr.isEmpty()) && (typeAttr.contains("css")))
+			{
+				rawLink = tag.attr("href");
+				if ((!rawLink.isEmpty()) && (rawLink.compareTo("")!=0)) links.add(resolveLink(rawLink));
+			}
 		}
 		return links;
 	}
