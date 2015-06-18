@@ -1,12 +1,14 @@
 package imagescraper;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+//Class used to download a single file
 public class FileDownloader implements Runnable
 {
 	
@@ -46,6 +48,13 @@ public class FileDownloader implements Runnable
 		}
 	}
 	
+	private String getDirectoryFromFileName(String name)
+	{
+		int index = name.lastIndexOf("\\");
+		if (index<0) return "";
+		return name.substring(0,index);
+	}
+	
 	private void getFile() throws MalformedURLException, IOException, FileNotFoundException
 	{
 		BufferedInputStream reader = null;
@@ -53,7 +62,16 @@ public class FileDownloader implements Runnable
 		try
 		{
 			URL url = new URL(urlString);
-			fs = new FileOutputStream(fileName);
+			try
+			{
+				fs = new FileOutputStream(fileName);
+			}
+			catch(FileNotFoundException e)
+			{
+				File f = new File(getDirectoryFromFileName(fileName));
+				if (!f.mkdirs()) throw new IOException();
+				fs = new FileOutputStream(fileName);
+			}
 			reader = new BufferedInputStream(url.openStream());
 			int count = 0;
 			byte barray[] = new byte[maxlen];
