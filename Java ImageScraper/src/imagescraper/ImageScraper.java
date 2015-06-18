@@ -25,7 +25,7 @@ public class ImageScraper
 	private static final int fileDownloadBufferlength = 10000;
 	private static final long threadKillWaitTime = 10;
 	private static final int threadPoolSize = 10;
-	private static final String dirname = "C:\\Users\\Dany\\Downloads\\test\\";
+	private static final String dirname = System.getProperty("user.home")+"\\images\\";
 	private static final long sleepMillis = 100;
 	
 	public static volatile AtomicInteger ntasks;
@@ -92,6 +92,7 @@ public class ImageScraper
 		String name, fname;
 		ExecutorService exec = Executors.newFixedThreadPool(threadPoolSize);
 		ntasks = new AtomicInteger();
+		System.out.println("Downlaoding images into folder "+dirname);
 		for(int i=0;i<linksList.size();i++)
 		{
 			System.out.println("Downloading : "+linksList.get(i));
@@ -99,8 +100,6 @@ public class ImageScraper
 			fname = fileTitle(name);
 			if (fname.length()>0)	exec.execute(new FileDownloader(name, dirname+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength));
 			else	exec.execute(new FileDownloader(name, dirname+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength));
-			/*if (fname.length()>0) new Thread(new FileDownloader(name, dirname+fileTitle(name)+"."+fileExtension(name), fileDownloadBufferlength)).start();
-			else new Thread(new FileDownloader(name, dirname+Integer.toString(i)+"."+fileExtension(name), fileDownloadBufferlength)).start();*/
 		}
 		//Shut down threads as described in Java API
 		exec.shutdown(); //Stop accepting new execute commands
