@@ -87,7 +87,9 @@ public class ImageScraper
 		List<String> linksList = new ArrayList<String>();
 		urlFetcher.fetchImageLinks(linksList);
 		//Extract URLs of CSS files
-		//List<String> cssLinks = urlFetcher.fetchCSSLinks();
+		List<String> cssLinks = urlFetcher.fetchCSSLinks();
+		CSSFileExtractor cssExtractor = new CSSFileExtractor();
+		cssExtractor.getExtractedImageURLs(linksList,cssLinks);
 		urlFetcher.fetchStyleTags(linksList);
 		String name, fname;
 		ExecutorService exec = Executors.newFixedThreadPool(threadPoolSize);

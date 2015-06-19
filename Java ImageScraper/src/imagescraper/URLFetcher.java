@@ -18,14 +18,14 @@ public class URLFetcher
 		this.baseURL = baseURL;
 	}
 	
-	private String stemPath(String s,int minIndex)
+	public static String stemPath(String s,int minIndex)
 	{
 		int index = s.lastIndexOf('/');
 		if ((index==-1) || (index<=minIndex)) return s+"/";
 		else return s.substring(0, index+1);
 	}
 	
-	private String backPath(String s)
+	public static String backPath(String s)
 	{
 		int index = s.lastIndexOf('/');
 		int index2 = s.lastIndexOf('/',index-1);
@@ -33,7 +33,7 @@ public class URLFetcher
 		else return s.substring(0, index2+1);
 	}
 	
-	private String domainPath(String s,int minIndex)
+	public static String domainPath(String s,int minIndex)
 	{
 		if (minIndex+1>s.length()-1) return s;
 		int index = s.indexOf('/',minIndex+1);
@@ -41,7 +41,7 @@ public class URLFetcher
 		else return s.substring(0,index+1);
 	}
 	
-	private int computeMinIndex(String s)
+	public static int computeMinIndex(String s)
 	{
 		if (s.indexOf("http")!=-1) return "http://".length()-1;
 		else if (s.indexOf("https")!=-1) return "https://".length()-1;
